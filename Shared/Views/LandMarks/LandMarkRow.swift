@@ -17,11 +17,18 @@ struct LandMarkRow: View {
                 .frame(width: 50, height: 50)
             Text(landMark.name)
             Spacer()
+            
+            if landMark.isFavorite {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+            }
         }
     }
 }
 
 struct LandMarkRow_Previews: PreviewProvider {
+    static var landMarks = ModelData().landMarks
+
     static var previews: some View {
         Group {
             LandMarkRow(landMark: landMarks[0])
