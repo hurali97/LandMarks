@@ -11,6 +11,17 @@ import Combine
 final class ModelData: ObservableObject {
     @Published var landMarks: [LandMark] = load("landmarkData.json")
     var hikes: [Hike] = load("hikeData.json")
+    
+    var categories: [String: [LandMark]] {
+        Dictionary(
+            grouping: landMarks,
+            by: { $0.category.rawValue }
+        )
+    }
+    
+    var features: [LandMark] {
+        landMarks.filter { $0.isFeatured }
+    }
 }
 
 func load<T: Decodable>(_ filename: String) -> T {
