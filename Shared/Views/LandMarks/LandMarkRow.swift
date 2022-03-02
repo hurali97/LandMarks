@@ -15,7 +15,18 @@ struct LandMarkRow: View {
             landMark.image
                 .resizable()
                 .frame(width: 50, height: 50)
-            Text(landMark.name)
+                .cornerRadius(5)
+            
+            VStack(alignment: .leading) {
+                Text(landMark.name)
+                    .bold()
+                #if !os(watchOS)
+                Text(landMark.park)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                #endif
+            }
+
             Spacer()
             
             if landMark.isFavorite {
@@ -23,6 +34,7 @@ struct LandMarkRow: View {
                     .foregroundColor(.yellow)
             }
         }
+        .padding(.vertical, 4)
     }
 }
 
