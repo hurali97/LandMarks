@@ -11,7 +11,7 @@ struct LandMarkList: View {
     @EnvironmentObject var modelData: ModelData
     @State private var showFavoritesOnly = false
     @State private var filter = FilterCategory.all
-
+    @State private var selectedLandmark: LandMark?
 
     enum FilterCategory: String, CaseIterable, Identifiable {
         case all = "All"
@@ -34,15 +34,20 @@ struct LandMarkList: View {
         return showFavoritesOnly ? "Favorite \(title)" : title
     }
     
+    var index: Int? {
+        modelData.landMarks.firstIndex(where: { $0.id == selectedLandmark?.id })
+    }
+    
     var body: some View {
         NavigationView {
-            List {
+            List(selection: $selectedLandmark) {
                 ForEach(filteredLandmarks) { landmark in
                     NavigationLink {
                         LandMarkDetail(landMark: landmark)
                     } label: {
                         LandMarkRow(landMark: landmark)
                     }
+                    .tag(landmark)
                 }
             }
             .navigationTitle(title)
@@ -67,6 +72,24 @@ struct LandMarkList: View {
             }
             
             Text("Select a Landmark")
+        }
+        .modifierif(index != nil) { _view in
+            _view.focusedValue(\.selectedLandmark, $modelData.landMarks[index ?? 0])
+        }
+    }
+}
+
+extension View {
+    /// Applies the given transform if the given condition evaluates to `true`.
+    /// - Parameters:
+    ///   - condition: The condition to evaluate.
+    ///   - transform: The transform to apply to the source `View`.
+    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
+    @ViewBuilder func `modifierif`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
